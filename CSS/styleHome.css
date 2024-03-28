@@ -1,0 +1,194 @@
+html {
+    height: 100%;
+    color: #fff;
+
+  }
+  body {
+    margin:0;
+    padding:0;
+    font-family: sans-serif;
+    background: linear-gradient(#141e30, #243b55);
+  }
+
+  main{
+    /* height: 500px; */
+    height: fit-content;
+    width: 95%;
+    /* background:#ebe9e9; */
+    margin: 0 auto;
+    border: 2px solid green;
+    padding: 15px;
+  }
+  .flexbox{
+    background-color: #141e30;
+    border: 2px solid red;
+    margin-top: 20px;
+    padding: 10px;
+    height: fit-content;
+    padding: 10px;
+
+
+  }
+  #User{
+    display: flex;
+    justify-content: space-evenly;
+  }
+  #flex{
+    border: 2px solid green;
+    display: flex;
+    padding: 20px;
+    justify-content: space-between;
+   
+  }
+
+  /* chat */
+
+  .user-info {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.user-info h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.info-item {
+    margin-bottom: 10px;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.value {
+    margin-left: 10px;
+}
+
+#container{
+ border: greenyellow 2px solid;
+ /* max-width: 810px; */
+ max-width: 100%;
+  display: flex; /* ou inline-block, en fonction de votre cas d'utilisation */
+    padding-left: 20px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+    padding-right: 20px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+    margin: 0 auto; /* Centre l'élément horizontalement */
+}
+
+svg {
+  opacity: 0;
+}
+.flex-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.single-chart {
+  width: 100%;
+  justify-content: space-around ;
+}
+
+.circular-chart {
+  display: block;
+  margin: 10px auto;
+  max-width: 100%;
+  max-height: 250px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+
+.circular-chart.blue .circle {
+  stroke: #3c9ee5;
+}
+
+.percentage {
+  fill: #666;
+  font-family: sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
+}
+
+
+/* Style du bouton de déconnexion */
+#formlogout button {
+  padding: 10px 20px;
+  color: #03e9f4;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  letter-spacing: 4px
+}
+
+header {
+  /* position: relative;  */
+  /* Positionnement relatif pour positionner les enfants de manière absolue */
+  background-color: #333; /* Couleur de fond */
+  color: #fff; /* Couleur du texte */
+  padding: 10px; /* Espacement intérieur */
+  display: flex;
+  justify-content: space-between;
+  
+}
+
+h1 {
+  margin: 0; /* Supprimer les marges par défaut */
+  font-size: 24px; /* Taille de la police */
+}
+
+.bigNum{
+  font-size: 3rem;
+}
+#grades ,#XP{
+  width: 25%;
+}
+h3{
+  display: flex;
+  justify-content: space-around;
+}
+
+/* legend */
+
+.legend {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 10px;
+  margin-right: 5px;
+  border: 1px solid #000; /* Bordure autour du rectangle */
+}
+
+.legend-label {
+  font-size: 14px;
+}
