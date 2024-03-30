@@ -1,176 +1,15 @@
-import { IndexHTML, HomeHTML, graphqlQuery } from "./templates.js";
+import { IndexHTML, HomeHTML } from "./templates.js";
+import { graphqlQuery, colors } from "./utiles.js";
 import { jwt } from "./script.js";
-// import { Charts } from "./charts.js";
-const graphqlEndpointSignIn = 'https://learn.zone01dakar.sn/api/auth/signin';
+import { SignIn } from "./signin.js";
+
 const graphqlEndpoint = "https://learn.zone01dakar.sn/api/graphql-engine/v1/graphql";
 
-
-//-------------------------INDEX---------------------------------//C
-export const IndexHandler = () => {
-    document.body.innerHTML = IndexHTML
-    const form = document.getElementById("form");
-
-    // // console.log("form", form);
-    if (form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault()
-            // Données de login
-            let loginData = {
-                username: (document.getElementById('username')).value,
-                password: (document.getElementById('password')).value
-            };
-            SignIn(loginData)
-        })
-    }
-}
-const StockJWT = async (data) => {
-    // console.log("data", data);
-    localStorage.setItem("jwt", data)
-    window.location.reload();
-
-}
-var couleurs = [
-    '#FF0000', // Rouge
-    '#00FF00', // Vert
-    '#0000FF', // Bleu
-    '#FFFF00', // Jaune
-    '#FF00FF', // Magenta
-    '#00FFFF', // Cyan
-    '#FFA500', // Orange
-    '#800080', // Violet
-    '#008000', // Vert foncé
-    '#000080', // Bleu foncé
-    '#800000', // Marron
-    '#808000', // Olive
-    '#008080', // Sarcelle
-    '#C0C0C0', // Argent
-    '#FFFFFF'  // Blanc
-];
-const HandleError = () => {
-    let p = document.createElement('p')
-    p.innerHTML = "Bad Credentials! Try again!!!"
-    p.style.color = "red"
-    let id = document.getElementById('paragraph')
-    if (!id) {
-        p.id = "paragraph"
-        form.appendChild(p)
-    }
-
-}
-
-function utf8_to_b64(str) {
-    return window.btoa(unescape(encodeURIComponent(str)));
-}
-function PourcentageRation(up,down){
-    let ratio= up+down;
-
-return (up *100) / ratio;
-}
-
-const SignIn = (loginData) => {
-    const credentials = `${loginData.username}:${loginData.password}`;
-    const base64Credentials = utf8_to_b64(credentials)
-    const authorizationHeader = `Basic ${base64Credentials}`;
-
-    // En-tête à inclure dans la requête HTTP
-    const headers = {
-        'Authorization': authorizationHeader,
-        'Content-Type': 'application/json',
-
-    };
-
-    // Options de la requête Fetch
-    const fetchOptions = {
-        method: 'POST',
-        headers: headers,
-    };
-    fetch(graphqlEndpointSignIn, fetchOptions)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return HandleError()
-            }
-        })
-        .then(data => {
-            // console.log("in extra", data);
-            if (data !== undefined) {
-                StockJWT(data)
-            }
-        })
-        .catch(error => {
-            console.error('Erreur lors de la requête GraphQL:', error);
-        });
-
-}
-
-
-//-------------------------HOME---------------------------------//C
-
-export const HomeHandler = () => {
-    // console.log("in home");
-    document.body.innerHTML = HomeHTML
-    const headers = {
-        'Authorization': `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-
-    };
-
-    // Options de la requête Fetch
-    const fetchOptions = {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ query: graphqlQuery })
-    };
-
-    fetch(graphqlEndpoint, fetchOptions)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                // console.log("error detected");
-            }
-        })
-        .then(data => {
-            // console.log("in extra", data);
-            let transaction = []
-            let totalxp = 0
-            let Amount = []
-            let time = []
-
-            let user = data.data.User[0]
-            transaction = data.data.Transaction
-            let skill = data.data.Skills
-         let skills = FormatSkills(skill)
-            transaction.forEach(element => {
-                totalxp += element.amount
-                Amount.push(element.amount)
-                time.push({ nom: element.path, amount: element.amount })
-            });
-            totalxp = Math.round(totalxp / 1000)
-            user["totalXP"] = totalxp + " XP"
-            user["amount"] = Amount
-            user["time"] = time
-            user['skills'] = skills
-            user["levels"]=user.events[0].level
-            // console.log("user", skills);
-            // // console.log("transac,time,amount", transaction,Amount,time);
-            display(user)
-            
-        })
-        .catch(error => {
-            console.error('Erreur lors de la requête GraphQL:', error);
-        });
-
-}
-
-const display = (user) => {
-    // Charts(user)
+const FirstSection = (user) => {
     let divInfo = document.getElementById('User')
     let divInfouser = document.getElementById('infosuser')
-    // console.log(divInfo, divInfouser);
     let h3 = document.createElement('h3')
-    h3.innerHTML = `Welcome ${user.firstName} ${user.lastName}!!!`
+    h3.innerHTML = `Welcome ${user.Infos.firstName} ${user.Infos.lastName}!!!`
     h3.style.color = "#fff"
     divInfo.appendChild(h3)
 
@@ -179,15 +18,15 @@ const display = (user) => {
     <h2>User Information</h2>
     <div class="info-item">
         <span class="label">Name:</span>
-        <span class="value">${user.firstName} ${user.lastName}</span>
+        <span class="value">${user.Infos.firstName} ${user.Infos.lastName}</span>
     </div>
     <div class="info-item">
         <span class="label">Email:</span>
-        <span class="value">${user.email}</span>
+        <span class="value">${user.Infos.email}</span>
     </div>
     <div class="info-item">
         <span class="label">Login:</span>
-        <span class="value">${user.login}</span>
+        <span class="value">${user.Infos.login}</span>
     </div>
 
 
@@ -195,81 +34,71 @@ const display = (user) => {
 
     `
     divInfouser.innerHTML = another
-    // let skills=[]
-    let skill = user["skills"]
-    // console.log("skill",skill);
-
-   console.log("user",user);
-    console.log("skill", skill);
-    let skills = skill.map(objet => objet["amount"]);
-    console.log("bef", skills);
-    const divgrades=document.getElementById("grades")
-    let grades=document.createElement('span')
-    grades.innerHTML=user.levels
-    grades.className="bigNum"
+    const divgrades = document.getElementById("grades")
+    let grades = document.createElement('span')
+    grades.innerHTML = user.Levels
+    grades.className = "bigNum"
     divgrades.appendChild(grades)
-    const divxp=document.getElementById("XP")
-    let totalxp=document.createElement('span')
-    totalxp.innerHTML=user.totalXP
-    totalxp.className="bigNum"
+    const divxp = document.getElementById("XP")
+    let totalxp = document.createElement('span')
+    totalxp.innerHTML = user.Totalxp
+    totalxp.className = "bigNum"
     divxp.appendChild(totalxp)
-    CreateCircle(user.totalUp,user.totalDown)
-    t(skills)
-
-    // Sélection du bouton de déconnexion
-var logoutButton = document.getElementById('formlogout');
-
-// Ajout d'un gestionnaire d'événement pour le clic sur le bouton de déconnexion
-logoutButton.addEventListener('click', function(event) {
-    // Empêcher le comportement par défaut du bouton (soumission du formulaire)
-    event.preventDefault();
-    // Effectuer d'autres actions de déconnexion ici (par exemple, redirection de l'utilisateur, appel AJAX, etc.)
-    // Par exemple :
-    localStorage.removeItem('jwt');
-    window.location.reload();
-
-});
 }
-function mise_a_l_echelle(valeurs, echelle_maximale) {
-    console.log('recu', valeurs, echelle_maximale);
-    let valeur_min = Math.min(...valeurs);
-    let valeur_max = Math.max(...valeurs);
 
-    let valeurs_echelle = [];
-    valeurs.forEach(function (valeur) {
-        let nouvelle_valeur = (valeur - valeur_min) * (echelle_maximale / (valeur_max - valeur_min));
-        valeurs_echelle.push(nouvelle_valeur);
+const LogOut = () => {
+
+    var logoutButton = document.getElementById('formlogout');
+
+    logoutButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        localStorage.removeItem('jwt');
+        window.location.reload();
+
     });
-
-    return valeurs_echelle;
 }
-const CreateCircle=(up,down)=>{
+
+function PourcentageRation(up, down, audit) {
+    let ratio = up + down;
+
+    return (up * 100) / ratio;
+}
+
+const CreateCircle = (up, down, audit) => {
     // Nouvelle valeur pour le tracé et le texte
-var newValue =Math.round( PourcentageRation(up,down)); // Par exemple, une nouvelle valeur de 80%
-console.log("newvalue",newValue);
-// Sélection de l'élément <path> et mise à jour de l'attribut stroke-dasharray
-var path = document.getElementById('pathcircle');
-path.setAttribute('stroke-dasharray', newValue + ', 100');
+    var newValue = Math.round(PourcentageRation(up, down)); // Par exemple, une nouvelle valeur de 80%
+    // Sélection de l'élément <path> et mise à jour de l'attribut stroke-dasharray
+    var path = document.getElementById('pathcircle');
+    path.setAttribute('stroke-dasharray', newValue + ', 100');
 
-// Sélection de l'élément <text> et mise à jour du contenu texte
-var text = document.querySelector('.percentage');
-text.textContent = newValue + '%';
+    // Sélection de l'élément <text> et mise à jour du contenu texte
+    var text = document.querySelector('.percentage');
+    text.textContent = newValue + '%';
+    let color = ["none","#3c9ee5","#eee"]
+    let label= ["Ratio : "+audit.toFixed(1),"UP : "+(up/1000000).toFixed(2),"DOWN : "+(down/1000000).toFixed(2)]
+
+    for (let index = 0; index < color.length; index++) {
+        
+        
+        LegendGraph("legendcircle",color[index],label[index])
+    }
 
 }
-const t = (skills) => {
-    // import { DrawSVGPlugin } from '@/js/vendors/gsap/plugins/DrawSVGPlugin';
 
+const DrawGraphSkilss =async (user) => {
+    // import { DrawSVGPlugin } from '@/js/vendors/gsap/plugins/DrawSVGPlugin';
+    let skill = user["Skills"]
+    let skills = await skill.map(objet => objet["amount"]);
+    let labels = await skill.map(objet => (objet["type"]).split("_")[1]);
+    // const pourcentages = skills.map(valeur =>Math.round( calculerPourcentage(valeur)));
+    // console.log("skills",pourcentages);
     var container = document.getElementById('container');
     var graphMeasurement = document.getElementById('graph-measurement');
     var allCircles = document.getElementsByTagName('circle');
     var allLines = document.getElementsByTagName('line');
-    
-    // console.log("in t",skills);
-    var destArray = mise_a_l_echelle(skills, 300)
-    console.log(allCircles.length,allLines.length,destArray.length);
-    console.log("desarray",destArray);
-    // console.log('tab',destaArray);
-    // var destArray = [15, 152, 28, 170, 5, 93, 44, 122, 179, 170, 20, 54, 65];
+
+    var destArray = Echelle(skills, 300)
+
     TweenMax.set(container, {
         //   position: 'absolute',
         //   xPercent: -50,
@@ -280,25 +109,16 @@ const t = (skills) => {
         borderRadius: 10,
         padding: 40
     })
-    // TweenMax.set(allCircles, {
-    //     attr: {
-    //         fill: '#FFFFFF',
-    //         r: 5
-    //     },
-    //     transformOrigin: '50% 50%',
-    //     scale: 0
-    // });
-    // Changer les couleurs des cercles
-for (var i = 0; i < allCircles.length; i++) {
-    TweenMax.set(allCircles[i], {
-        attr: {
-            fill: couleurs[i], // Utilisez l'index modulo la longueur du tableau de couleurs pour obtenir une couleur différente pour chaque cercle
-            r: 5
-        },
-        transformOrigin: '50% 50%',
-        scale: 0
-    });
-}
+
+    for (var i = 0; i < allCircles.length; i++) {
+        TweenMax.set(allCircles[i], {
+            attr: {
+                fill: colors[i],
+            },
+            transformOrigin: '50% 50%',
+            scale: 0
+        });
+    }
     TweenMax.set([allLines], {
         attr: {
             stroke: '#18B5DD'
@@ -374,29 +194,177 @@ for (var i = 0; i < allCircles.length; i++) {
             });
         }
     }
+    // let legend= document.getElementById("legendgraph")
+    for (let index = 0; index < colors.length; index++) {
+       LegendGraph("legendgraph",colors[index],labels[index])
+        
+    }
+  
+var dynamicText = document.getElementById('dynamicText');
+
+// Parcourir les cercles et ajouter des événements pour mettre à jour le texte
+for (var i = 0; i < allCircles.length; i++) {
+    let skill = await skills[i]
+    allCircles[i].addEventListener('mouseover', function(event) {
+
+        var couleur = event.target.getAttribute('fill'); // Obtenez la couleur du cercle survolé
+        dynamicText.textContent =  skill; // Mettre à jour le texte avec la couleur
+        dynamicText.style.visibility = "visible"; // Afficher le texte
+    });
+
+    allCircles[i].addEventListener('mouseout', function(event) {
+        dynamicText.style.visibility = "hidden"; // Masquer le texte lorsque vous ne survolez plus un cercle
+    });
+}
 
 }
 
-function FormatSkills(tableauObjets){
-    let tableauAccumule=[]
-// Parcourir chaque objet dans le tableau d'objets
-for (let i = 0; i < tableauObjets.length; i++) {
-    let objet = tableauObjets[i];
-    let trouve = false;
+function Echelle(valeurs, echelle_maximale) {
+    let valeur_min = Math.min(...valeurs);
+    let valeur_max = Math.max(...valeurs);
+    let valeurs_echelle = [];
+    valeurs.forEach(function (valeur) {
+        let nouvelle_valeur = (valeur - valeur_min) * (echelle_maximale / (valeur_max - valeur_min));
+        valeurs_echelle.push(nouvelle_valeur);
+    });
 
-    // Vérifier si le type existe déjà dans le tableau accumulé
-    for (let j = 0; j < tableauAccumule.length; j++) {
-        if (tableauAccumule[j].type === objet.type) {
-            tableauAccumule[j].amount+=objet.amount // Augmenter l'âge si le type existe déjà
-            trouve = true;
-            break;
+    return valeurs_echelle;
+}
+//-------------------------FormatsSkills---------------------------------//
+
+function FormatSkills(tableauObjets) {
+    let tableauAccumule = []
+    // Parcourir chaque objet dans le tableau d'objets
+    for (let i = 0; i < tableauObjets.length; i++) {
+        let objet = tableauObjets[i];
+        let trouve = false;
+        // Vérifier si le type existe déjà dans le tableau accumulé
+        for (let j = 0; j < tableauAccumule.length; j++) {
+            if (tableauAccumule[j].type === objet.type) {
+                tableauAccumule[j].amount += objet.amount // Augmenter l'âge si le type existe déjà
+                trouve = true;
+                break;
+            }
+        }
+        // Si le type n'existe pas encore, ajouter un nouvel objet avec âge à 1
+        if (!trouve) {
+            tableauAccumule.push({ type: objet.type, amount: objet.amount });
         }
     }
-
-    // Si le type n'existe pas encore, ajouter un nouvel objet avec âge à 1
-    if (!trouve) {
-        tableauAccumule.push({ type: objet.type, amount: objet.amount });
-    }}
     return tableauAccumule
 }
+const LegendGraph = (id, color, attribut) => {
+    let legend = document.getElementById(`${id}`)
+    let div0 = document.createElement('div')
+    div0.className="legend-item"
+    let div = document.createElement('div')
 
+    div.className = "legend-color"
+    div.style.backgroundColor = color
+    let div1 = document.createElement('div')
+    div1.className = "legend-label"
+    div1.textContent= attribut
+    div0.appendChild(div)
+    div0.appendChild(div1)
+    legend.appendChild(div0)
+
+}
+
+const CalculXp=(xp)=>{
+    if (xp<=1000000){
+     return   Math.round(xp / 1000) +" XP"
+    }
+    return Math.round(xp / 1000000)+" KB"
+}
+// function calculerPourcentage(valeur) {
+//     const valeurMax = 400;
+//     if (valeur >= valeurMax) {
+//         return 100; // Si la valeur est supérieure ou égale à 500, renvoie 100%
+//     } else {
+//         return (valeur / valeurMax) * 100; // Calcul du pourcentage en fonction de la valeur maximale de 500
+//     }
+// }
+const Display = (user) => {
+    FirstSection(user)
+    CreateCircle(user.Infos.totalUp, user.Infos.totalDown, user.Infos.auditRatio)
+    DrawGraphSkilss(user)
+    LogOut()
+
+}
+
+//-------------------------INDEX---------------------------------//
+export const IndexHandler = () => {
+    document.body.innerHTML = IndexHTML
+    const form = document.getElementById("form");
+
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            // Données de login
+            let loginData = {
+                username: (document.getElementById('username')).value,
+                password: (document.getElementById('password')).value
+            };
+            SignIn(loginData)
+        })
+    }
+}
+
+//-------------------------HOME---------------------------------//C
+
+export const HomeHandler = () => {
+
+    document.body.innerHTML = HomeHTML
+    const headers = {
+        'Authorization': `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+    };
+
+    // Options de la requête Fetch
+    const fetchOptions = {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ query: graphqlQuery })
+    };
+
+    fetch(graphqlEndpoint, fetchOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.log("error detected");
+            }
+        })
+        .then(data => {
+            let result = data.data.User[0]
+            let transaction = data.data.Transaction
+            let skill = data.data.Skills
+            let totalxp = 0
+            let User = {
+                Infos: [],
+                Totalxp: 0,
+                Amount: [],
+                Time: [],
+                Levels: 0,
+                Skills: []
+            }
+            let skills = FormatSkills(skill)
+            transaction.forEach(element => {
+                totalxp += element.amount
+                User.Amount.push(element.amount)
+                User.Time.push({ nom: element.path, amount: element.amount })
+            });
+
+            User.Infos = result
+            // totalxp = Math.round(totalxp / 1000)
+            User.Totalxp = CalculXp(totalxp)
+            User.Skills = skills.slice(0, 15)
+            User["Levels"] = result.events[0].level
+            Display(User)
+
+        })
+        .catch(error => {
+            console.error('Erreur lors de la requête GraphQL:', error);
+        });
+
+}

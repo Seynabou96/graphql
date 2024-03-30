@@ -16,12 +16,12 @@ html {
     width: 95%;
     /* background:#ebe9e9; */
     margin: 0 auto;
-    border: 2px solid green;
+    border: 2px solid white;
     padding: 15px;
   }
   .flexbox{
     background-color: #141e30;
-    border: 2px solid red;
+    border: 2px solid #3c9ee5;
     margin-top: 20px;
     padding: 10px;
     height: fit-content;
@@ -34,7 +34,7 @@ html {
     justify-content: space-evenly;
   }
   #flex{
-    border: 2px solid green;
+    border: 2px solid white;
     display: flex;
     padding: 20px;
     justify-content: space-between;
@@ -69,7 +69,7 @@ html {
 }
 
 #container{
- border: greenyellow 2px solid;
+ border: whiteyellow 2px solid;
  /* max-width: 810px; */
  max-width: 100%;
   display: flex; /* ou inline-block, en fonction de votre cas d'utilisation */
@@ -159,7 +159,7 @@ h1 {
 }
 
 .bigNum{
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 #grades ,#XP{
   width: 25%;
@@ -173,10 +173,11 @@ h3{
 
 .legend {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .legend-item {
+  width: 20%;
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -191,4 +192,8 @@ h3{
 
 .legend-label {
   font-size: 14px;
+}
+
+#legendcircle .legend-item{
+width: 30%;
 }

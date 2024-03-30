@@ -11,9 +11,4 @@ if (jwt === null) {
     HomeHandler()
 }
 
-console.log("hello");
 
-// const skill=[{type:"skill",amount:12},{type:"prog",amount:12},{type:"skill",amount:23}]
-
-// console.log("bef", skills);
-// console.log('last',FormatSkills(tableauObjets)); 
