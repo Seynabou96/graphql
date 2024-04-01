@@ -33,12 +33,21 @@ html {
     display: flex;
     justify-content: space-evenly;
   }
-  #flex{
+  .flex{
     border: 2px solid white;
-    display: flex;
     padding: 20px;
-    justify-content: space-between;
-   
+    display: flex;
+
+    /* flex-wrap: wrap; */
+    justify-content: space-around;
+
+    /* justify-content: space-between; */
+
+  }
+  .flex div{
+    align-items: center;
+    /* justify-content: space-around; */
+
   }
 
   /* chat */
@@ -47,7 +56,7 @@ html {
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 20px;
-    max-width: 300px;
+   width: 100%;
     margin: 0 auto;
 }
 
@@ -150,7 +159,7 @@ header {
   padding: 10px; /* Espacement intérieur */
   display: flex;
   justify-content: space-between;
-  
+
 }
 
 h1 {

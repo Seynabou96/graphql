@@ -1,5 +1,7 @@
 //--------------------------------Endpoint SignIn---------------------::
 
+import { HomeHandler } from "./methods.js";
+
 const graphqlEndpointSignIn = 'https://learn.zone01dakar.sn/api/auth/signin';
 
 
@@ -7,7 +9,8 @@ const graphqlEndpointSignIn = 'https://learn.zone01dakar.sn/api/auth/signin';
 
 const StockJWT = async (data) => {
     localStorage.setItem("jwt", data)
-    window.location.reload();
+    // window.location.reload();
+    HomeHandler()
 }
 
 //-------------------------Handle Error---------------------------------//
