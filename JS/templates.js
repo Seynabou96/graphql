@@ -5,7 +5,7 @@ export const Graph = `
 
         <svg version="1.1"
            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-           x="0px" y="0px" width="800px" height="400px" viewBox="0 0 750 450" enable-background="new 0 0 741 500"
+           x="0px" y="0px" width="800px" height="400px" viewBox="0 0 800 450" enable-background="new 0 0 741 500"
            xml:space="preserve">
 
 
