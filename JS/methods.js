@@ -376,7 +376,7 @@ const CalculXp = (xp) => {
 const Display = async (user) => {
     FirstSection(user)
     let tabx = await LineSVG(user.Skills)
-    console.log(tabx[tabx.length-1]);
+    // console.log(tabx[tabx.length-1]);
     const svg = document.querySelector("#container svg")
     svg.setAttribute("viewBox",`0 -1 ${tabx[tabx.length-1]+10} 450`,)
     CircleSVG(tabx)
